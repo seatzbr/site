@@ -1,622 +1,463 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
-
 <head>
-
   <meta charset="UTF-8" />
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Montanha Digital</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Rajdhani&display=swap" rel="stylesheet" />
-
+  
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet" />
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.2/vanilla-tilt.min.js"></script>
-
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
   <style>
+    :root {
+      --neon-purple: #b026ff;
+      --neon-cyan: #00f3ff;
+      --deep-bg: #030008;
+      --glass-surface: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+    }
 
+    /* --- Base & Reset --- */
     body {
-
       font-family: 'Rajdhani', sans-serif;
-
-      background-color: #000;
-
-      color: white;
-
+      background-color: var(--deep-bg);
+      color: #e0e0e0;
       overflow-x: hidden;
-
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .hero-title {
-
-      font-family: 'Orbitron', sans-serif;
-
-      font-size: 3rem;
-
-      background: linear-gradient(90deg, #7f00ff, #00d2ff);
-
-      -webkit-background-clip: text;
-
-      -webkit-text-fill-color: transparent;
-
-    }
-
-    .btn-telegram {
-
-      display: inline-flex;
-
-      align-items: center;
-
-      padding: 1rem 2rem;
-
-      border-radius: 50px;
-
-      background: linear-gradient(135deg, #0088cc, #25a3e1);
-
-      font-weight: bold;
-
-      transition: 0.3s ease;
-
-      position: relative;
-
-      overflow: hidden;
-
-    }
-
-    .btn-telegram:hover {
-
-      transform: scale(1.05);
-
-      box-shadow: 0 0 20px #25a3e1;
-
-    }
-
-    .btn-telegram:hover::after {
-
-      content: '';
-
-      position: absolute;
-
-      top: -50%;
-
-      left: -50%;
-
-      width: 200%;
-
-      height: 200%;
-
-      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
-
-      animation: shine 1.5s;
-
-    }
-
-    .btn-x {
-
-      display: inline-flex;
-
-      align-items: center;
-
-      padding: 1rem 2rem;
-
-      border-radius: 50px;
-
-      background: linear-gradient(135deg, #000000, #434343);
-
-      font-weight: bold;
-
-      transition: 0.3s ease;
-
-      position: relative;
-
-      overflow: hidden;
-
-    }
-
-    .btn-x:hover {
-
-      transform: scale(1.05);
-
-      box-shadow: 0 0 20px #434343;
-
-    }
-
-    .btn-x:hover::after {
-
-      content: '';
-
-      position: absolute;
-
-      top: -50%;
-
-      left: -50%;
-
-      width: 200%;
-
-      height: 200%;
-
-      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
-
-      animation: shine 1.5s;
-
-    }
-
-    .btn-instagram {
-
-      display: inline-flex;
-
-      align-items: center;
-
-      padding: 1rem 2rem;
-
-      border-radius: 50px;
-
-      background: linear-gradient(135deg, #833AB4, #FD1D1D, #FCB045);
-
-      font-weight: bold;
-
-      transition: 0.3s ease;
-
-      position: relative;
-
-      overflow: hidden;
-
-    }
-
-    .btn-instagram:hover {
-
-      transform: scale(1.05);
-
-      box-shadow: 0 0 20px #FD1D1D;
-
-    }
-
-    .btn-instagram:hover::after {
-
-      content: '';
-
-      position: absolute;
-
-      top: -50%;
-
-      left: -50%;
-
-      width: 200%;
-
-      height: 200%;
-
-      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
-
-      animation: shine 1.5s;
-
-    }
-
-    .btn-whatsapp {
-
-      display: inline-flex;
-
-      align-items: center;
-
-      padding: 1rem 2rem;
-
-      border-radius: 50px;
-
-      background: linear-gradient(135deg, #25D366, #128C7E);
-
-      font-weight: bold;
-
-      transition: 0.3s ease;
-
-      position: relative;
-
-      overflow: hidden;
-
-    }
-
-    .btn-whatsapp:hover {
-
-      transform: scale(1.05);
-
-      box-shadow: 0 0 20px #25D366;
-
-    }
-
-    .btn-whatsapp:hover::after {
-
-      content: '';
-
-      position: absolute;
-
-      top: -50%;
-
-      left: -50%;
-
-      width: 200%;
-
-      height: 200%;
-
-      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
-
-      animation: shine 1.5s;
-
-    }
-
-    .social-icon {
-
-      width: 24px;
-
-      height: 24px;
-
-      margin-right: 10px;
-
-    }
-
-    .buttons-container {
-
-      display: flex;
-
-      gap: 1rem;
-
-      flex-wrap: wrap;
-
-      justify-content: center;
-
-      align-items: center;
-
-    }
-
-    @keyframes shine {
-
-      0% { transform: rotate(45deg) translate(-150%, -150%); }
-
-      100% { transform: rotate(45deg) translate(150%, 150%); }
-
-    }
-
+    /* Scrollbar Customization */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--deep-bg); }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--neon-purple); }
+
+    /* --- Ambient Effects --- */
     canvas#bg {
-
       position: fixed;
-
       top: 0;
-
       left: 0;
-
       z-index: -1;
+      opacity: 0.8;
+    }
 
+    /* Noise overlay for texture */
+    .noise-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.04"/%3E%3C/svg%3E');
+    }
+
+    /* --- Typography --- */
+    .hero-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      line-height: 1.1;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: linear-gradient(180deg, #fff 0%, #a5a5a5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(176, 38, 255, 0.4);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Subtitle styling */
+    .hero-subtitle {
+      font-size: 1.25rem;
+      letter-spacing: 1px;
+      color: #a0a0a0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    /* --- Cyber Buttons (Glass + Neon) --- */
+    .buttons-container {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      perspective: 1000px;
+    }
+
+    [class^="btn-"] {
+      display: inline-flex;
+      align-items: center;
+      padding: 1rem 2.5rem;
+      border-radius: 4px; /* More tech/angular look */
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      z-index: 10;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    /* Brand Colors with Glows */
+    .btn-telegram { background: rgba(0, 136, 204, 0.15); color: #29b6f6; box-shadow: 0 0 15px rgba(0, 136, 204, 0.1); border-color: rgba(0, 136, 204, 0.4); }
+    .btn-x { background: rgba(0, 0, 0, 0.6); color: #fff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); }
+    .btn-instagram { background: linear-gradient(135deg, rgba(131, 58, 180, 0.2), rgba(253, 29, 29, 0.2)); color: #ff9a9a; border-color: #fd1d1d; }
+    .btn-whatsapp { background: rgba(37, 211, 102, 0.15); color: #4ade80; box-shadow: 0 0 15px rgba(37, 211, 102, 0.1); border-color: rgba(37, 211, 102, 0.4); }
+
+    /* Button Hover States */
+    [class^="btn-"]:hover {
+      transform: translateY(-3px) scale(1.02);
+      text-shadow: 0 0 8px currentColor;
+    }
+
+    .btn-telegram:hover { background: rgba(0, 136, 204, 0.3); box-shadow: 0 0 30px rgba(0, 136, 204, 0.4), inset 0 0 10px rgba(0,136,204,0.5); }
+    .btn-x:hover { background: rgba(255,255,255,0.1); box-shadow: 0 0 30px rgba(255,255,255,0.2); }
+    .btn-instagram:hover { background: linear-gradient(135deg, rgba(131, 58, 180, 0.4), rgba(253, 29, 29, 0.4)); box-shadow: 0 0 30px rgba(253, 29, 29, 0.4); }
+    .btn-whatsapp:hover { background: rgba(37, 211, 102, 0.3); box-shadow: 0 0 30px rgba(37, 211, 102, 0.4), inset 0 0 10px rgba(37,211,102,0.5); }
+
+    /* Button Shine Animation */
+    [class^="btn-"]::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transform: skewX(-20deg);
+      transition: 0.5s;
+      pointer-events: none;
+    }
+    [class^="btn-"]:hover::after { left: 150%; transition: 0.7s ease-in-out; }
+
+    .social-icon { width: 20px; height: 20px; margin-right: 12px; fill: currentColor; filter: drop-shadow(0 0 2px currentColor); }
+
+    /* --- Cards (Resources) --- */
+    .resources-section {
+      position: relative;
+      z-index: 10;
+      /* Remove solid gradient background, use glass overlay instead */
+      background: radial-gradient(circle at center, rgba(20,20,40,0.4) 0%, rgba(0,0,0,0.9) 100%);
+      border-top: 1px solid rgba(255,255,255,0.05);
     }
 
     .card-3d {
-
+      background: linear-gradient(180deg, rgba(20,20,20,0.6) 0%, rgba(10,10,10,0.8) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 2.5rem;
+      transform-style: preserve-3d;
       will-change: transform;
-
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
-  </style>
+    /* Card Glow Borders */
+    .card-3d::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      padding: 1px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.2), transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
 
+    /* Card Hover */
+    .card-3d h3 { font-family: 'Orbitron'; letter-spacing: 1px; margin-bottom: 0.5rem; font-weight: 700; }
+    .card-3d p { color: #888; font-size: 0.95rem; line-height: 1.5; }
+
+    /* Specific Border Colors for Cards */
+    .card-amazon { border-bottom: 2px solid #b026ff; }
+    .card-mercadolivre { border-bottom: 2px solid #ffe600; }
+    .card-future { border-bottom: 2px solid #00f3ff; }
+
+    .card-amazon:hover { box-shadow: 0 0 30px rgba(176, 38, 255, 0.2); }
+    .card-mercadolivre:hover { box-shadow: 0 0 30px rgba(255, 230, 0, 0.15); }
+    .card-future:hover { box-shadow: 0 0 30px rgba(0, 243, 255, 0.2); }
+
+    /* --- Footer --- */
+    footer {
+      background: #000;
+      border-top: 1px solid #222;
+      position: relative;
+      z-index: 10;
+    }
+    footer a { color: #666; transition: color 0.3s; margin: 0 10px; display: inline-flex; align-items: center; gap: 5px; font-family: 'Rajdhani', sans-serif; font-weight: 600; text-transform: uppercase; }
+    footer a:hover { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
+
+    /* Scroll Top Button */
+    #scrollTopBtn {
+      background: rgba(176, 38, 255, 0.2);
+      border: 1px solid rgba(176, 38, 255, 0.5);
+      backdrop-filter: blur(5px);
+      box-shadow: 0 0 15px rgba(176, 38, 255, 0.3);
+      color: #fff;
+    }
+    #scrollTopBtn:hover {
+      background: var(--neon-purple);
+      box-shadow: 0 0 25px var(--neon-purple);
+    }
+  </style>
 </head>
 
 <body>
-
+  <div class="noise-overlay"></div>
+  
   <canvas id="bg"></canvas>
 
+  <section class="min-h-screen flex flex-col justify-center items-center text-center px-4 relative z-10 pt-10">
+    <div style="position: absolute; width: 60%; height: 60%; background: radial-gradient(circle, rgba(127,0,255,0.15) 0%, transparent 70%); filter: blur(60px); z-index: -1;"></div>
 
+    <h1 class="hero-title mb-2 gs-reveal">Montanha Digital</h1>
+    <p class="mb-12 text-xl hero-subtitle gs-reveal">Primeiro canal que usa IA para trazer as melhores ofertas!</p>
 
-  <!-- Hero Section -->
-
-  <section class="min-h-screen flex flex-col justify-center items-center text-center px-4">
-
-    <h1 class="hero-title mb-4">Montanha Digital</h1>
-
-    <p class="mb-6 text-xl">Primeiro canal que usa IA para trazer as melhores ofertas!</p>
-
-<div class="buttons-container">
-
-  <!-- TELEGRAM GRUPO -->
-  <a href="https://t.me/grupomontanhadigital" class="btn-telegram">
-    <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.538.26l.193-2.98 5.59-5.04c.24-.213-.054-.334-.373-.121l-6.916 4.34-2.98-.924c-.643-.203-.656-.643.136-.95l11.57-4.46c.535-.196 1.004.128.832.941z"/>
-    </svg>
-    Telegram • GRUPO de Ofertas
-  </a>
-  
-  <!-- TELEGRAM CANAL -->
-  <a href="https://t.me/montanhadigitaloficial" class="btn-telegram">
-    <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.538.26l.193-2.98 5.59-5.04c.24-.213-.054-.334-.373-.121l-6.916 4.34-2.98-.924c-.643-.203-.656-.643.136-.95l11.57-4.46c.535-.196 1.004.128.832.941z"/>
-    </svg>
-    Telegram • CANAL de Ofertas
-  </a>
+    <div class="buttons-container gs-reveal">
+      <a href="https://t.me/grupomontanhadigital" class="btn-telegram">
+        <svg class="social-icon" viewBox="0 0 24 24">
+          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.538.26l.193-2.98 5.59-5.04c.24-.213-.054-.334-.373-.121l-6.916 4.34-2.98-.924c-.643-.203-.656-.643.136-.95l11.57-4.46c.535-.196 1.004.128.832.941z"/>
+        </svg>
+        Telegram • GRUPO de Ofertas
+      </a>
+      
+      <a href="https://t.me/montanhadigitaloficial" class="btn-telegram">
+        <svg class="social-icon" viewBox="0 0 24 24">
+          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.538.26l.193-2.98 5.59-5.04c.24-.213-.054-.334-.373-.121l-6.916 4.34-2.98-.924c-.643-.203-.656-.643.136-.95l11.57-4.46c.535-.196 1.004.128.832.941z"/>
+        </svg>
+        Telegram • CANAL de Ofertas
+      </a>
 
       <a href="https://x.com/digitalmontanha" class="btn-x">
-
-        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
-
+        <svg class="social-icon" viewBox="0 0 24 24">
           <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-
         </svg>
-
         Conheça nossas ofertas no X (Twitter)!
-
       </a>
 
       <a href="https://www.instagram.com/montanhadigitaloficial/" class="btn-instagram">
-
-        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
-
+        <svg class="social-icon" viewBox="0 0 24 24">
           <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.148 3.228-1.667 4.772-4.919 4.919-.058 1.265-.07 1.645-.07 4.85s.012 3.584.07 4.85c.148 3.228 1.667 4.772 4.919 4.919 1.266.058 1.645.07 4.85.07s3.584-.012 4.85-.07c3.252-.148 4.771-1.691 4.919-4.919.058-1.265.07-1.645.07-4.85s-.012-3.584-.07-4.85c-.148-3.228-1.667-4.772-4.919-4.919-1.266-.058-1.645-.07-4.85-.07zm0 2.163c3.204 0 3.584.012 4.85.07 2.44.111 3.391 1.056 3.502 3.502.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.111 2.44-1.062 3.391-3.502 3.502-1.265.058-1.645.07-4.85.07s-3.584-.012-4.85-.07c-2.44-.111-3.391-1.056-3.502-3.502-.058-1.265-.07-1.645-.07-4.85s.012-3.584.07-4.85c.111-2.44 1.062-3.391 3.502-3.502 1.265-.058 1.645-.07 4.85-.07zm0 3.627c-2.347 0-4.25 1.903-4.25 4.25s1.903 4.25 4.25 4.25 4.25-1.903 4.25-4.25-1.903-4.25-4.25-4.25zm0 2.163c1.18 0 2.131.951 2.131 2.131s-.951 2.131-2.131 2.131-2.131-.951-2.131-2.131.951-2.131 2.131-2.131zm6.54-.577c0 .813-.66 1.473-1.473 1.473s-1.473-.66-1.473-1.473c0-.813.66-1.473 1.473-1.473s1.473.66 1.473 1.473z"/>
-
         </svg>
-
         Conheça nossas ofertas no Instagram!
-
       </a>
 
       <a href="https://chat.whatsapp.com/CaEbDpdy2DFAyvpuAXfhK1" class="btn-whatsapp">
-
-        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
-
+        <svg class="social-icon" viewBox="0 0 24 24">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-
         </svg>
-
         Conheça nossas ofertas no WhatsApp!
-
       </a>
-
     </div>
-
-    </div>
-
   </section>
 
-
-
-  <!-- Recursos -->
-
-  <section class="py-20 px-4 bg-gradient-to-r from-purple-900 via-black to-blue-900">
-
-    <div class="text-center mb-10">
-
-      <h2 class="text-3xl font-bold text-white mb-2">Recursos</h2>
-
-      <p>O futuro do consumo inteligente com IA</p>
-
+  <section class="py-24 px-4 resources-section">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold text-white mb-4" style="font-family: 'Orbitron'; text-shadow: 0 0 20px rgba(0,243,255,0.3);">Recursos</h2>
+        <p class="text-gray-400 text-lg">O futuro do consumo inteligente com IA</p>
+      </div>
+      
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="card-3d card-amazon">
+          <h3 class="text-2xl text-white">Amazon</h3>
+          <p>Ofertas atualizadas com inteligência artificial</p>
+        </div>
+        
+        <div class="card-3d card-mercadolivre">
+          <h3 class="text-2xl text-white">Mercado Livre</h3>
+          <p>Análise inteligente para o melhor custo-benefício</p>
+        </div>
+        
+        <div class="card-3d card-future">
+          <h3 class="text-2xl text-white">Em breve: Shopee & Magalu</h3>
+          <p>Mais plataformas, mais oportunidades</p>
+        </div>
+      </div>
     </div>
-
-    <div class="grid md:grid-cols-3 gap-6">
-
-      <div class="bg-black/50 backdrop-blur-md p-6 rounded-xl border border-purple-500 transform transition-transform card-3d">
-
-        <h3 class="text-xl text-white">Amazon</h3>
-
-        <p>Ofertas atualizadas com inteligência artificial</p>
-
-      </div>
-
-      <div class="bg-black/50 backdrop-blur-md p-6 rounded-xl border border-blue-500 transform transition-transform card-3d">
-
-        <h3 class="text-xl text-white">Mercado Livre</h3>
-
-        <p>Análise inteligente para o melhor custo-benefício</p>
-
-      </div>
-
-      <div class="bg-black/50 backdrop-blur-md p-6 rounded-xl border border-pink-500 transform transition-transform card-3d">
-
-        <h3 class="text-xl text-white">Em breve: Shopee & Magalu</h3>
-
-        <p>Mais plataformas, mais oportunidades</p>
-
-      </div>
-
-    </div>
-
   </section>
 
-
-
-  <!-- Footer -->
-
-  <footer class="mt-20 py-6 bg-black text-center text-gray-400 text-sm border-t border-gray-800">
-
-    <div class="flex justify-center gap-6 mb-2">
-
-      <a href="https://t.me/montanhadigitaloficial" target="_blank" class="hover:text-white transition duration-300">
-
-        <svg class="w-5 h-5 inline" fill="currentColor" viewBox="0 0 24 24">
-
-          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.538.26l.193-2.98 5.59-5.04c.24-.213-.054-.334-.373-.121l-6.916 4.34-2.98-.924c-.643-.203-.656-.643.136-.95l11.57-4.46c.535-.196 1.004.128.832.941z"/>
-
-        </svg>
-
+  <footer class="mt-0 py-8 text-center text-gray-500 text-sm">
+    <div class="flex justify-center flex-wrap gap-8 mb-4">
+      <a href="https://t.me/montanhadigitaloficial" target="_blank">
+        <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.538.26l.193-2.98 5.59-5.04c.24-.213-.054-.334-.373-.121l-6.916 4.34-2.98-.924c-.643-.203-.656-.643.136-.95l11.57-4.46c.535-.196 1.004.128.832.941z"/></svg>
         Telegram
-
       </a>
-
-      <a href="https://x.com/digitalmontanha" target="_blank" class="hover:text-white transition duration-300">
-
-        <svg class="w-5 h-5 inline" fill="currentColor" viewBox="0 0 24 24">
-
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-
-        </svg>
-
+      <a href="https://x.com/digitalmontanha" target="_blank">
+        <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         X (Twitter)
-
       </a>
-
-      <a href="https://www.instagram.com/montanhadigitaloficial/" target="_blank" class="hover:text-white transition duration-300">
-
-        <svg class="w-5 h-5 inline" fill="currentColor" viewBox="0 0 24 24">
-
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.148 3.228-1.667 4.772-4.919 4.919-.058 1.265-.07 1.645-.07 4.85s.012 3.584.07 4.85c.148 3.228 1.667 4.772 4.919 4.919 1.266.058 1.645.07 4.85.07s3.584-.012 4.85-.07c3.252-.148 4.771-1.691 4.919-4.919.058-1.265.07-1.645.07-4.85s-.012-3.584-.07-4.85c-.148-3.228-1.667-4.772-4.919-4.919-1.266-.058-1.645-.07-4.85-.07zm0 2.163c3.204 0 3.584.012 4.85.07 2.44.111 3.391 1.056 3.502 3.502.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.111 2.44-1.062 3.391-3.502 3.502-1.265.058-1.645.07-4.85.07s-3.584-.012-4.85-.07c-2.44-.111-3.391-1.056-3.502-3.502-.058-1.265-.07-1.645-.07-4.85s.012-3.584.07-4.85c.111-2.44 1.062-3.391 3.502-3.502 1.265-.058 1.645-.07 4.85-.07zm0 3.627c-2.347 0-4.25 1.903-4.25 4.25s1.903 4.25 4.25 4.25 4.25-1.903 4.25-4.25-1.903-4.25-4.25-4.25zm0 2.163c1.18 0 2.131.951 2.131 2.131s-.951 2.131-2.131 2.131-2.131-.951-2.131-2.131.951-2.131 2.131-2.131zm6.54-.577c0 .813-.66 1.473-1.473 1.473s-1.473-.66-1.473-1.473c0-.813.66-1.473 1.473-1.473s1.473.66 1.473 1.473z"/>
-
-        </svg>
-
+      <a href="https://www.instagram.com/montanhadigitaloficial/" target="_blank">
+        <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.148 3.228-1.667 4.772-4.919 4.919-.058 1.265-.07 1.645-.07 4.85s.012 3.584.07 4.85c.148 3.228 1.667 4.772 4.919 4.919 1.266.058 1.645.07 4.85.07s3.584-.012 4.85-.07c3.252-.148 4.771-1.691 4.919-4.919.058-1.265.07-1.645.07-4.85s-.012-3.584-.07-4.85c-.148-3.228-1.667-4.772-4.919-4.919-1.266-.058-1.645-.07-4.85-.07zm0 2.163c3.204 0 3.584.012 4.85.07 2.44.111 3.391 1.056 3.502 3.502.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.111 2.44-1.062 3.391-3.502 3.502-1.265.058-1.645.07-4.85.07s-3.584-.012-4.85-.07c-2.44-.111-3.391-1.056-3.502-3.502-.058-1.265-.07-1.645-.07-4.85s.012-3.584.07-4.85c.111-2.44 1.062-3.391 3.502-3.502 1.265-.058 1.645-.07 4.85-.07zm0 3.627c-2.347 0-4.25 1.903-4.25 4.25s1.903 4.25 4.25 4.25 4.25-1.903 4.25-4.25-1.903-4.25-4.25-4.25zm0 2.163c1.18 0 2.131.951 2.131 2.131s-.951 2.131-2.131 2.131-2.131-.951-2.131-2.131.951-2.131 2.131-2.131zm6.54-.577c0 .813-.66 1.473-1.473 1.473s-1.473-.66-1.473-1.473c0-.813.66-1.473 1.473-1.473s1.473.66 1.473 1.473z"/></svg>
         Instagram
-
       </a>
-
-      <a href="https://chat.whatsapp.com/CaEbDpdy2DFAyvpuAXfhK1" target="_blank" class="hover:text-white transition duration-300">
-
-        <svg class="w-5 h-5 inline" fill="currentColor" viewBox="0 0 24 24">
-
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-
-        </svg>
-
+      <a href="https://chat.whatsapp.com/CaEbDpdy2DFAyvpuAXfhK1" target="_blank">
+        <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         WhatsApp
-
       </a>
-
     </div>
-
     <p>&copy; <span id="year"></span> Montanha Digital. Todos os direitos reservados.</p>
-
   </footer>
 
-
-
-  <!-- Scroll to Top -->
-
-  <button id="scrollTopBtn" class="fixed bottom-6 right-6 p-3 bg-purple-700 hover:bg-purple-600 text-white rounded-full shadow-lg transition transform hover:scale-110 z-50 hidden">
-
-    ↑
-
+  <button id="scrollTopBtn" class="fixed bottom-6 right-6 p-4 rounded-full z-50 hidden transition transform hover:scale-110">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 15l-6-6-6 6"/>
+    </svg>
   </button>
 
-
-
   <script>
-
-    // Fundo de partículas com Three.js
-
+    // --- 1. THREE.JS: TERRENO DIGITAL (CYBER-TERRAIN) ---
     const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x030008, 0.02); // Fog para profundidade infinita
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg'), alpha: true });
-
+    const renderer = new THREE.WebGLRenderer({ 
+      canvas: document.getElementById('bg'), 
+      alpha: true, 
+      antialias: true 
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    camera.position.z = 5;
+    // Criando uma grade de terreno ondulado
+    const geometry = new THREE.PlaneGeometry(100, 100, 40, 40);
+    const material = new THREE.MeshBasicMaterial({ 
+      color: 0x5000aa, 
+      wireframe: true,
+      transparent: true,
+      opacity: 0.15
+    });
+    const terrain = new THREE.Mesh(geometry, material);
+    scene.add(terrain);
 
-
-
-    const geometry = new THREE.BufferGeometry();
-
-    const vertices = [];
-
-    for (let i = 0; i < 1000; i++) {
-
-      vertices.push((Math.random() - 0.5) * 20);
-
-      vertices.push((Math.random() - 0.5) * 20);
-
-      vertices.push((Math.random() - 0.5) * 20);
-
+    // Sistema de partículas flutuantes (Dados/Poeira Digital)
+    const pGeo = new THREE.BufferGeometry();
+    const pCount = 800;
+    const pPos = new Float32Array(pCount * 3);
+    for(let i=0; i<pCount*3; i++) {
+      pPos[i] = (Math.random() - 0.5) * 60;
     }
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    const pMat = new THREE.PointsMaterial({ size: 0.08, color: 0x00f3ff, transparent: true, opacity: 0.6 });
+    const particles = new THREE.Points(pGeo, pMat);
+    scene.add(particles);
 
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    // Posicionamento Inicial
+    terrain.rotation.x = -Math.PI / 2; // Deitar o plano
+    terrain.position.y = -5; // Jogar para baixo da tela
+    camera.position.z = 10;
+    camera.position.y = 2;
 
-    const material = new THREE.PointsMaterial({ color: 0x7f00ff, size: 0.05 });
+    // Mouse Interaction
+    let mouseX = 0;
+    let mouseY = 0;
+    document.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
 
-    const points = new THREE.Points(geometry, material);
-
-    scene.add(points);
-
-
+    // Variáveis de animação do terreno
+    const originalPositions = geometry.attributes.position.array.slice();
+    let time = 0;
 
     function animate() {
-
       requestAnimationFrame(animate);
+      time += 0.005;
 
-      points.rotation.x += 0.0005;
+      // Animação ondulatória do terreno (Simulando "Montanha")
+      const positions = geometry.attributes.position.array;
+      for(let i = 0; i < positions.length; i += 3) {
+        // Ondulação baseada em seno e cosseno
+        const x = originalPositions[i];
+        const y = originalPositions[i+1]; // Note que geometry é plane, então y é o "z" visual no wireframe
+        
+        // Complex wave function
+        const z = Math.sin(x * 0.5 + time) * 1.5 + Math.cos(y * 0.3 + time) * 1.5;
+        positions[i+2] = z; // Modifica o Z (altura) do plane geometry
+      }
+      geometry.attributes.position.needsUpdate = true;
 
-      points.rotation.y += 0.0005;
+      // Rotação suave da câmera baseada no mouse
+      camera.position.x += (mouseX * 3 - camera.position.x) * 0.05;
+      camera.position.y += (-mouseY * 1 + 2 - camera.position.y) * 0.05;
+      camera.lookAt(0, 0, 0);
+
+      // Partículas subindo lentamente
+      particles.rotation.y = time * 0.1;
 
       renderer.render(scene, camera);
-
     }
-
     animate();
 
+    // Resize Handler
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
 
+    // --- 2. GSAP: REVEAL ANIMATIONS (Cinematic Intro) ---
+    gsap.from(".gs-reveal", {
+      duration: 1.5,
+      y: 50,
+      opacity: 0,
+      stagger: 0.2,
+      ease: "power3.out",
+      delay: 0.2
+    });
 
-    // Scroll Reveal
-
-    document.querySelectorAll('section').forEach(section => {
-
-      section.style.opacity = 0;
-
-      const observer = new IntersectionObserver(([entry]) => {
-
+    // Scroll Trigger simples para os cards
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
-
-          gsap.to(section, { duration: 1, opacity: 1, y: -20 });
-
-          observer.unobserve(section);
-
+          gsap.fromTo(entry.target, 
+            { opacity: 0, y: 30, rotationX: 10 },
+            { opacity: 1, y: 0, rotationX: 0, duration: 1, ease: "power2.out" }
+          );
+          observer.unobserve(entry.target);
         }
+      });
+    }, { threshold: 0.1 });
 
-      }, { threshold: 0.1 });
+    document.querySelectorAll('.card-3d').forEach(card => observer.observe(card));
 
-      observer.observe(section);
-
-    });
-
-
-
-    // Scroll to top button
-
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
-
-    window.addEventListener('scroll', () => {
-
-      scrollTopBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
-
-    });
-
-    scrollTopBtn.addEventListener('click', () => {
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    });
-
-
-
-    // Ano atual no footer
-
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-
-
-    // Tilt efeito nos cards
-
+    // --- 3. VANILLA TILT (Efeito Holográfico nos Cards) ---
     VanillaTilt.init(document.querySelectorAll(".card-3d"), {
-
-      max: 15,
-
-      speed: 400,
-
+      max: 10,
+      speed: 1000,
       glare: true,
-
-      "max-glare": 0.3
-
+      "max-glare": 0.2,
+      scale: 1.02,
+      gyroscope: true // Mobile friendly
     });
 
+    // --- 4. UTILS ---
+    document.getElementById('year').textContent = new Date().getFullYear();
+    
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        scrollTopBtn.classList.remove('hidden');
+        gsap.to(scrollTopBtn, { opacity: 1, duration: 0.3 });
+      } else {
+        gsap.to(scrollTopBtn, { opacity: 0, duration: 0.3, onComplete: () => scrollTopBtn.classList.add('hidden') });
+      }
+    });
+    
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   </script>
-
 </body>
-
 </html>
-
-
-
