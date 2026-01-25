@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Montanha Digital</title>
+  <title>Montanha Digital - Tecnologia IA Avançada</title>
   
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet" />
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.2/vanilla-tilt.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
@@ -16,310 +17,1005 @@
     :root {
       --neon-purple: #b026ff;
       --neon-cyan: #00f3ff;
-      --deep-bg: #030008;
+      --neon-yellow: #ffe600;
+      --neon-green: #25d366;
+      --neon-pink: #ff00ff;
+      --deep-bg: #000000;
       --glass-surface: rgba(255, 255, 255, 0.03);
       --glass-border: rgba(255, 255, 255, 0.08);
     }
 
     /* --- Base & Reset --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
       font-family: 'Rajdhani', sans-serif;
-      background-color: var(--deep-bg);
+      background: #000;
       color: #e0e0e0;
       overflow-x: hidden;
-      margin: 0;
       -webkit-font-smoothing: antialiased;
+      cursor: none;
     }
 
-    /* Scrollbar Customization */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: var(--deep-bg); }
-    ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--neon-purple); }
+    /* Custom Cursor */
+    .custom-cursor {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--neon-cyan);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 10000;
+      transition: all 0.1s ease;
+      box-shadow: 0 0 20px var(--neon-cyan), inset 0 0 20px var(--neon-cyan);
+      mix-blend-mode: difference;
+    }
 
-    /* --- Ambient Effects --- */
+    .cursor-follower {
+      width: 8px;
+      height: 8px;
+      background: var(--neon-cyan);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 10001;
+      transition: all 0.15s ease;
+      box-shadow: 0 0 15px var(--neon-cyan);
+      mix-blend-mode: screen;
+    }
+
+    /* Scrollbar Ultra Premium */
+    ::-webkit-scrollbar { width: 12px; }
+    ::-webkit-scrollbar-track { 
+      background: #000; 
+      border-left: 1px solid rgba(0, 243, 255, 0.3);
+    }
+    ::-webkit-scrollbar-thumb { 
+      background: linear-gradient(180deg, var(--neon-purple), var(--neon-cyan), var(--neon-pink)); 
+      border-radius: 10px; 
+      box-shadow: 0 0 10px var(--neon-cyan);
+    }
+    ::-webkit-scrollbar-thumb:hover { 
+      background: linear-gradient(180deg, #d040ff, #20ffff, #ff20ff); 
+      box-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-purple);
+    }
+
+    /* --- Enhanced Ambient Effects --- */
     canvas#bg {
       position: fixed;
       top: 0;
       left: 0;
       z-index: -1;
-      opacity: 0.8;
+      opacity: 1;
     }
 
-    /* Noise overlay for texture */
+    /* Animated Gradient Background */
+    .gradient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: radial-gradient(circle at 20% 50%, rgba(176, 38, 255, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 50%, rgba(0, 243, 255, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 50% 80%, rgba(255, 0, 255, 0.2) 0%, transparent 50%);
+      animation: gradientShift 15s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { opacity: 0.5; transform: scale(1) rotate(0deg); }
+      33% { opacity: 0.8; transform: scale(1.1) rotate(120deg); }
+      66% { opacity: 0.6; transform: scale(0.9) rotate(240deg); }
+    }
+
+    /* Enhanced Noise overlay */
     .noise-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none;
       z-index: 9999;
-      background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.04"/%3E%3C/svg%3E');
+      background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.06"/%3E%3C/svg%3E');
+      animation: grain 10s steps(12) infinite;
+      mix-blend-mode: overlay;
     }
 
-    /* --- Typography --- */
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-5%, -5%); }
+      20% { transform: translate(-10%, 5%); }
+      30% { transform: translate(5%, -10%); }
+      40% { transform: translate(-5%, 15%); }
+      50% { transform: translate(-10%, 5%); }
+      60% { transform: translate(15%, 0); }
+      70% { transform: translate(0, 10%); }
+      80% { transform: translate(-15%, 0); }
+      90% { transform: translate(10%, 5%); }
+    }
+
+    /* Premium Scanline Effect */
+    .scanlines {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 9998;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 243, 255, 0.03),
+        rgba(0, 243, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      animation: scanline 10s linear infinite;
+      mix-blend-mode: screen;
+    }
+
+    @keyframes scanline {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(20px); }
+    }
+
+    /* Advanced Holographic Grid */
+    .grid-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      background-image: 
+        linear-gradient(rgba(0, 243, 255, 0.05) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(176, 38, 255, 0.05) 2px, transparent 2px);
+      background-size: 60px 60px;
+      animation: gridMove 30s linear infinite;
+      perspective: 1000px;
+      transform-style: preserve-3d;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translate(0, 0) rotateX(0deg); }
+      100% { transform: translate(60px, 60px) rotateX(360deg); }
+    }
+
+    /* Floating Light Beams */
+    .light-beams {
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        linear-gradient(45deg, transparent 30%, rgba(0, 243, 255, 0.05) 50%, transparent 70%),
+        linear-gradient(-45deg, transparent 30%, rgba(176, 38, 255, 0.05) 50%, transparent 70%);
+      animation: beamRotate 20s linear infinite;
+    }
+
+    @keyframes beamRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* --- Ultra Premium Typography --- */
     .hero-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(2.5rem, 8vw, 5rem);
-      line-height: 1.1;
+      font-size: clamp(2.5rem, 10vw, 7rem);
+      font-weight: 900;
+      line-height: 1;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      background: linear-gradient(180deg, #fff 0%, #a5a5a5 100%);
+      letter-spacing: 6px;
+      background: linear-gradient(135deg, #fff 0%, var(--neon-cyan) 25%, var(--neon-purple) 50%, var(--neon-pink) 75%, #fff 100%);
+      background-size: 300% 300%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 30px rgba(176, 38, 255, 0.4);
+      background-clip: text;
       position: relative;
       z-index: 2;
+      animation: titleGradient 8s ease infinite, titleFloat 6s ease-in-out infinite;
+      filter: drop-shadow(0 0 30px rgba(0, 243, 255, 0.8)) drop-shadow(0 0 60px rgba(176, 38, 255, 0.6));
+      text-shadow: none;
     }
 
-    /* Subtitle styling */
+    @keyframes titleGradient {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes titleFloat {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); }
+    }
+
+    /* Advanced Glitch Effect */
+    .hero-title::before,
+    .hero-title::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #fff 0%, var(--neon-cyan) 25%, var(--neon-purple) 50%, var(--neon-pink) 75%, #fff 100%);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-title::before {
+      animation: glitch1 3s infinite, titleGradient 8s ease infinite;
+      clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+      transform: translateX(-3px);
+      opacity: 0.9;
+    }
+
+    .hero-title::after {
+      animation: glitch2 3s infinite reverse, titleGradient 8s ease infinite;
+      clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+      transform: translateX(3px);
+      opacity: 0.9;
+    }
+
+    @keyframes glitch1 {
+      0%, 100% { transform: translateX(0); clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%); }
+      10% { transform: translateX(-5px) skew(-2deg); clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%); }
+      20% { transform: translateX(5px); clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%); }
+      30% { transform: translateX(-3px); clip-path: polygon(0 0, 100% 0, 100% 48%, 0 48%); }
+      40% { transform: translateX(0); clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%); }
+    }
+
+    @keyframes glitch2 {
+      0%, 100% { transform: translateX(0); clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%); }
+      15% { transform: translateX(5px) skew(2deg); clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%); }
+      25% { transform: translateX(-5px); clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%); }
+      35% { transform: translateX(3px); clip-path: polygon(0 58%, 100% 58%, 100% 100%, 0 100%); }
+      45% { transform: translateX(0); clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%); }
+    }
+
+    /* Premium Subtitle */
     .hero-subtitle {
-      font-size: 1.25rem;
-      letter-spacing: 1px;
-      color: #a0a0a0;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.2rem, 3vw, 1.6rem);
+      letter-spacing: 3px;
+      font-weight: 500;
+      color: #fff;
+      text-shadow: 0 0 20px rgba(0, 243, 255, 0.8), 0 0 40px rgba(176, 38, 255, 0.6);
+      animation: subtitlePulse 3s ease-in-out infinite;
+      position: relative;
+      display: inline-block;
     }
 
-    /* --- Cyber Buttons (Glass + Neon) --- */
+    .hero-subtitle::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+      animation: lineExpand 3s ease-in-out infinite;
+    }
+
+    @keyframes subtitlePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+    }
+
+    @keyframes lineExpand {
+      0%, 100% { width: 0%; }
+      50% { width: 80%; }
+    }
+
+    /* --- ULTRA PREMIUM BUTTONS --- */
     .buttons-container {
       display: flex;
-      gap: 1.5rem;
+      gap: 2rem;
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
-      perspective: 1000px;
+      perspective: 2000px;
+      padding: 2rem 0;
     }
 
     [class^="btn-"] {
       display: inline-flex;
       align-items: center;
-      padding: 1rem 2.5rem;
-      border-radius: 4px; /* More tech/angular look */
+      justify-content: center;
+      padding: 1.4rem 3rem;
+      border-radius: 8px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
       position: relative;
       overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      border: 1px solid rgba(255,255,255,0.1);
-      backdrop-filter: blur(10px);
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 2px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(20px) saturate(180%);
       z-index: 10;
       font-family: 'Orbitron', sans-serif;
       font-size: 0.9rem;
+      text-decoration: none;
+      cursor: pointer;
+      transform-style: preserve-3d;
     }
 
-    /* Brand Colors with Glows */
-    .btn-telegram { background: rgba(0, 136, 204, 0.15); color: #29b6f6; box-shadow: 0 0 15px rgba(0, 136, 204, 0.1); border-color: rgba(0, 136, 204, 0.4); }
-    .btn-x { background: rgba(0, 0, 0, 0.6); color: #fff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); }
-    .btn-instagram { background: linear-gradient(135deg, rgba(131, 58, 180, 0.2), rgba(253, 29, 29, 0.2)); color: #ff9a9a; border-color: #fd1d1d; }
-    .btn-whatsapp { background: rgba(37, 211, 102, 0.15); color: #4ade80; box-shadow: 0 0 15px rgba(37, 211, 102, 0.1); border-color: rgba(37, 211, 102, 0.4); }
+    /* Enhanced Brand Colors with 3D Effects */
+    .btn-whatsapp { 
+      background: linear-gradient(135deg, rgba(37, 211, 102, 0.3), rgba(37, 211, 102, 0.1));
+      color: #4ade80; 
+      box-shadow: 
+        0 8px 32px rgba(37, 211, 102, 0.4), 
+        inset 0 0 30px rgba(37, 211, 102, 0.15),
+        0 0 60px rgba(37, 211, 102, 0.2); 
+      border-color: rgba(37, 211, 102, 0.6); 
+    }
 
-    /* Button Hover States */
+    .btn-telegram { 
+      background: linear-gradient(135deg, rgba(0, 136, 204, 0.3), rgba(0, 136, 204, 0.1));
+      color: #29b6f6; 
+      box-shadow: 
+        0 8px 32px rgba(0, 136, 204, 0.4), 
+        inset 0 0 30px rgba(0, 136, 204, 0.15),
+        0 0 60px rgba(0, 136, 204, 0.2); 
+      border-color: rgba(0, 136, 204, 0.6); 
+    }
+    
+    .btn-mercadolivre {
+      background: linear-gradient(135deg, rgba(255, 230, 0, 0.25), rgba(255, 230, 0, 0.1));
+      color: #ffe600;
+      box-shadow: 
+        0 8px 32px rgba(255, 230, 0, 0.4), 
+        inset 0 0 30px rgba(255, 230, 0, 0.15),
+        0 0 60px rgba(255, 230, 0, 0.2);
+      border-color: rgba(255, 230, 0, 0.6);
+    }
+
+    .btn-x { 
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.8));
+      color: #fff; 
+      box-shadow: 
+        0 8px 32px rgba(255, 255, 255, 0.3), 
+        inset 0 0 30px rgba(255, 255, 255, 0.1),
+        0 0 60px rgba(255, 255, 255, 0.2); 
+      border-color: rgba(255, 255, 255, 0.4); 
+    }
+    
+    .btn-instagram { 
+      background: linear-gradient(135deg, rgba(131, 58, 180, 0.4), rgba(253, 29, 29, 0.3), rgba(252, 176, 69, 0.3)); 
+      color: #ff9a9a; 
+      border-color: #fd1d1d; 
+      box-shadow: 
+        0 8px 32px rgba(253, 29, 29, 0.5), 
+        inset 0 0 30px rgba(131, 58, 180, 0.3),
+        0 0 60px rgba(253, 29, 29, 0.3);
+    }
+
+    /* Ultra Premium Hover States */
     [class^="btn-"]:hover {
-      transform: translateY(-3px) scale(1.02);
-      text-shadow: 0 0 8px currentColor;
+      transform: translateY(-8px) scale(1.08) rotateX(5deg);
+      text-shadow: 0 0 20px currentColor;
+      border-width: 3px;
+      letter-spacing: 3px;
     }
 
-    .btn-telegram:hover { background: rgba(0, 136, 204, 0.3); box-shadow: 0 0 30px rgba(0, 136, 204, 0.4), inset 0 0 10px rgba(0,136,204,0.5); }
-    .btn-x:hover { background: rgba(255,255,255,0.1); box-shadow: 0 0 30px rgba(255,255,255,0.2); }
-    .btn-instagram:hover { background: linear-gradient(135deg, rgba(131, 58, 180, 0.4), rgba(253, 29, 29, 0.4)); box-shadow: 0 0 30px rgba(253, 29, 29, 0.4); }
-    .btn-whatsapp:hover { background: rgba(37, 211, 102, 0.3); box-shadow: 0 0 30px rgba(37, 211, 102, 0.4), inset 0 0 10px rgba(37,211,102,0.5); }
+    .btn-whatsapp:hover { 
+      background: linear-gradient(135deg, rgba(37, 211, 102, 0.5), rgba(37, 211, 102, 0.2));
+      box-shadow: 
+        0 15px 60px rgba(37, 211, 102, 0.7), 
+        inset 0 0 40px rgba(37, 211, 102, 0.4), 
+        0 0 100px rgba(37, 211, 102, 0.5),
+        0 5px 20px rgba(0, 0, 0, 0.5); 
+    }
 
-    /* Button Shine Animation */
+    .btn-telegram:hover { 
+      background: linear-gradient(135deg, rgba(0, 136, 204, 0.5), rgba(0, 136, 204, 0.2));
+      box-shadow: 
+        0 15px 60px rgba(0, 136, 204, 0.7), 
+        inset 0 0 40px rgba(0,136,204,0.4), 
+        0 0 100px rgba(0, 136, 204, 0.5),
+        0 5px 20px rgba(0, 0, 0, 0.5); 
+    }
+    
+    .btn-mercadolivre:hover {
+      background: linear-gradient(135deg, rgba(255, 230, 0, 0.4), rgba(255, 230, 0, 0.2));
+      box-shadow: 
+        0 15px 60px rgba(255, 230, 0, 0.7), 
+        inset 0 0 40px rgba(255, 230, 0, 0.4), 
+        0 0 100px rgba(255, 230, 0, 0.5),
+        0 5px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .btn-x:hover { 
+      background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(50, 50, 50, 0.9));
+      box-shadow: 
+        0 15px 60px rgba(255,255,255,0.5), 
+        0 0 100px rgba(255,255,255,0.3),
+        0 5px 20px rgba(0, 0, 0, 0.5); 
+    }
+    
+    .btn-instagram:hover { 
+      background: linear-gradient(135deg, rgba(131, 58, 180, 0.6), rgba(253, 29, 29, 0.5), rgba(252, 176, 69, 0.5)); 
+      box-shadow: 
+        0 15px 60px rgba(253, 29, 29, 0.7), 
+        0 0 100px rgba(131, 58, 180, 0.5),
+        0 5px 20px rgba(0, 0, 0, 0.5); 
+    }
+
+    /* Animated Border Effect */
+    [class^="btn-"]::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 8px;
+      padding: 3px;
+      background: linear-gradient(45deg, transparent, currentColor, transparent);
+      background-size: 200% 200%;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: borderSpin 4s linear infinite;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    [class^="btn-"]:hover::before {
+      opacity: 1;
+    }
+
+    @keyframes borderSpin {
+      0% { background-position: 0% 50%; transform: rotate(0deg); }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; transform: rotate(360deg); }
+    }
+
+    /* Enhanced Shine Animation */
     [class^="btn-"]::after {
       content: '';
       position: absolute;
       top: 0; left: -100%;
       width: 50%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
       transform: skewX(-20deg);
-      transition: 0.5s;
+      transition: 0.8s;
       pointer-events: none;
     }
-    [class^="btn-"]:hover::after { left: 150%; transition: 0.7s ease-in-out; }
+    [class^="btn-"]:hover::after { 
+      left: 150%; 
+      transition: 1s ease-in-out; 
+    }
 
-    .social-icon { width: 20px; height: 20px; margin-right: 12px; fill: currentColor; filter: drop-shadow(0 0 2px currentColor); }
+    /* Button Glow Pulse */
+    @keyframes buttonGlow {
+      0%, 100% { box-shadow: 0 8px 32px currentColor; }
+      50% { box-shadow: 0 8px 48px currentColor, 0 0 80px currentColor; }
+    }
 
-    /* --- Cards (Resources) --- */
+    .social-icon { 
+      width: 24px; 
+      height: 24px; 
+      margin-right: 14px; 
+      fill: currentColor; 
+      filter: drop-shadow(0 0 6px currentColor); 
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    [class^="btn-"]:hover .social-icon {
+      transform: scale(1.3) rotate(360deg);
+      filter: drop-shadow(0 0 12px currentColor);
+    }
+
+    /* --- PREMIUM CARDS --- */
     .resources-section {
       position: relative;
       z-index: 10;
-      /* Remove solid gradient background, use glass overlay instead */
-      background: radial-gradient(circle at center, rgba(20,20,40,0.4) 0%, rgba(0,0,0,0.9) 100%);
-      border-top: 1px solid rgba(255,255,255,0.05);
+      background: radial-gradient(circle at center, rgba(30,30,60,0.6) 0%, rgba(0,0,0,0.98) 100%);
+      border-top: 3px solid rgba(0, 243, 255, 0.3);
+      border-bottom: 3px solid rgba(176, 38, 255, 0.3);
+      overflow: hidden;
+    }
+
+    .resources-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.1), transparent);
+      animation: sectionShine 6s linear infinite;
+    }
+
+    @keyframes sectionShine {
+      0% { left: -100%; }
+      100% { left: 100%; }
     }
 
     .card-3d {
-      background: linear-gradient(180deg, rgba(20,20,20,0.6) 0%, rgba(10,10,10,0.8) 100%);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      padding: 2.5rem;
+      background: linear-gradient(135deg, rgba(30,30,50,0.8) 0%, rgba(10,10,30,0.95) 100%);
+      backdrop-filter: blur(25px) saturate(150%);
+      -webkit-backdrop-filter: blur(25px) saturate(150%);
+      border: 2px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 3.5rem;
       transform-style: preserve-3d;
       will-change: transform;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 
+        0 20px 60px rgba(0,0,0,0.8),
+        inset 0 0 30px rgba(255,255,255,0.03);
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    /* Card Glow Borders */
+    /* Animated Holographic Border */
     .card-3d::before {
       content: '';
       position: absolute;
-      inset: 0;
-      border-radius: 12px;
-      padding: 1px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.2), transparent);
+      inset: -3px;
+      border-radius: 20px;
+      padding: 3px;
+      background: linear-gradient(45deg, var(--neon-purple), var(--neon-cyan), var(--neon-pink), var(--neon-cyan), var(--neon-purple));
+      background-size: 400% 400%;
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
       pointer-events: none;
+      animation: borderFlow 6s linear infinite;
+      opacity: 0;
+      transition: opacity 0.5s;
     }
 
-    /* Card Hover */
-    .card-3d h3 { font-family: 'Orbitron'; letter-spacing: 1px; margin-bottom: 0.5rem; font-weight: 700; }
-    .card-3d p { color: #888; font-size: 0.95rem; line-height: 1.5; }
+    @keyframes borderFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-    /* Specific Border Colors for Cards */
-    .card-amazon { border-bottom: 2px solid #b026ff; }
-    .card-mercadolivre { border-bottom: 2px solid #ffe600; }
-    .card-future { border-bottom: 2px solid #00f3ff; }
+    .card-3d:hover::before {
+      opacity: 1;
+    }
 
-    .card-amazon:hover { box-shadow: 0 0 30px rgba(176, 38, 255, 0.2); }
-    .card-mercadolivre:hover { box-shadow: 0 0 30px rgba(255, 230, 0, 0.15); }
-    .card-future:hover { box-shadow: 0 0 30px rgba(0, 243, 255, 0.2); }
+    /* Card Inner Light */
+    .card-3d::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: width 0.8s, height 0.8s;
+      pointer-events: none;
+    }
 
-    /* --- Footer --- */
+    .card-3d:hover::after {
+      width: 500px;
+      height: 500px;
+    }
+
+    .card-3d h3 { 
+      font-family: 'Orbitron'; 
+      letter-spacing: 3px; 
+      margin-bottom: 1.2rem; 
+      font-weight: 900; 
+      font-size: 2rem;
+      position: relative;
+      z-index: 1;
+      text-transform: uppercase;
+    }
+    
+    .card-3d p { 
+      color: #bbb; 
+      font-size: 1.1rem; 
+      line-height: 1.8; 
+      position: relative;
+      z-index: 1;
+      font-weight: 500;
+    }
+
+    /* Specific Card Styles */
+    .card-amazon { 
+      border-bottom: 4px solid var(--neon-purple);
+    }
+    .card-amazon h3 { 
+      background: linear-gradient(135deg, #b026ff, #ff00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 25px rgba(176, 38, 255, 0.8)); 
+    }
+
+    .card-mercadolivre { 
+      border-bottom: 4px solid var(--neon-yellow);
+    }
+    .card-mercadolivre h3 { 
+      background: linear-gradient(135deg, #ffe600, #ffaa00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 25px rgba(255, 230, 0, 0.8)); 
+    }
+
+    .card-future { 
+      border-bottom: 4px solid var(--neon-cyan);
+    }
+    .card-future h3 { 
+      background: linear-gradient(135deg, #00f3ff, #00aaff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 25px rgba(0, 243, 255, 0.8)); 
+    }
+
+    .card-amazon:hover { 
+      box-shadow: 
+        0 0 80px rgba(176, 38, 255, 0.6), 
+        0 30px 80px rgba(0,0,0,0.9),
+        inset 0 0 40px rgba(176, 38, 255, 0.2); 
+      transform: translateY(-15px) scale(1.03);
+    }
+    
+    .card-mercadolivre:hover { 
+      box-shadow: 
+        0 0 80px rgba(255, 230, 0, 0.6), 
+        0 30px 80px rgba(0,0,0,0.9),
+        inset 0 0 40px rgba(255, 230, 0, 0.2); 
+      transform: translateY(-15px) scale(1.03);
+    }
+    
+    .card-future:hover { 
+      box-shadow: 
+        0 0 80px rgba(0, 243, 255, 0.6), 
+        0 30px 80px rgba(0,0,0,0.9),
+        inset 0 0 40px rgba(0, 243, 255, 0.2); 
+      transform: translateY(-15px) scale(1.03);
+    }
+
+    /* Card Icon with Animation */
+    .card-icon {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      font-size: 5rem;
+      opacity: 0.1;
+      pointer-events: none;
+      transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      filter: blur(1px);
+    }
+
+    .card-3d:hover .card-icon {
+      opacity: 0.2;
+      transform: scale(1.3) rotate(360deg);
+      filter: blur(0px) drop-shadow(0 0 20px currentColor);
+    }
+
+    /* --- FOOTER --- */
     footer {
-      background: #000;
-      border-top: 1px solid #222;
+      background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+      border-top: 3px solid rgba(0, 243, 255, 0.3);
       position: relative;
       z-index: 10;
+      overflow: hidden;
     }
-    footer a { color: #666; transition: color 0.3s; margin: 0 10px; display: inline-flex; align-items: center; gap: 5px; font-family: 'Rajdhani', sans-serif; font-weight: 600; text-transform: uppercase; }
-    footer a:hover { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
 
-    /* Scroll Top Button */
-    #scrollTopBtn {
-      background: rgba(176, 38, 255, 0.2);
-      border: 1px solid rgba(176, 38, 255, 0.5);
-      backdrop-filter: blur(5px);
-      box-shadow: 0 0 15px rgba(176, 38, 255, 0.3);
-      color: #fff;
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), var(--neon-cyan), transparent);
+      animation: footerLine 3s linear infinite;
     }
+
+    @keyframes footerLine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    
+    footer a { 
+      color: #999; 
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+      margin: 0 15px; 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 10px; 
+      font-family: 'Rajdhani', sans-serif; 
+      font-weight: 600; 
+      text-transform: uppercase; 
+      text-decoration: none;
+      position: relative;
+    }
+
+    footer a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--neon-cyan);
+      transition: width 0.4s;
+      box-shadow: 0 0 10px var(--neon-cyan);
+    }
+
+    footer a:hover::after {
+      width: 100%;
+    }
+    
+    footer a:hover { 
+      color: var(--neon-cyan); 
+      text-shadow: 0 0 20px var(--neon-cyan); 
+      transform: translateY(-3px) scale(1.1);
+    }
+
+    footer a svg {
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    footer a:hover svg {
+      transform: scale(1.3) rotate(360deg);
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+
+    /* Scroll Top Button Premium */
+    #scrollTopBtn {
+      background: linear-gradient(135deg, rgba(176, 38, 255, 0.4), rgba(0, 243, 255, 0.4));
+      border: 3px solid rgba(176, 38, 255, 0.8);
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 32px rgba(176, 38, 255, 0.5), 0 0 60px rgba(0, 243, 255, 0.3);
+      color: #fff;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
     #scrollTopBtn:hover {
-      background: var(--neon-purple);
-      box-shadow: 0 0 25px var(--neon-purple);
+      background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan));
+      box-shadow: 
+        0 15px 50px var(--neon-purple), 
+        0 0 100px var(--neon-cyan);
+      transform: translateY(-8px) scale(1.1) rotate(360deg);
+      border-color: var(--neon-cyan);
+    }
+
+    /* Floating Animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-25px); }
+    }
+
+    .float-animation {
+      animation: float 8s ease-in-out infinite;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: clamp(2rem, 12vw, 4rem);
+        letter-spacing: 3px;
+      }
+      
+      .buttons-container {
+        flex-direction: column;
+        gap: 1.5rem;
+        width: 100%;
+        padding: 0 1rem;
+      }
+      
+      [class^="btn-"] {
+        width: 100%;
+        justify-content: center;
+        padding: 1.2rem 2rem;
+      }
+      
+      .card-3d {
+        padding: 2.5rem;
+      }
+
+      .custom-cursor,
+      .cursor-follower {
+        display: none;
+      }
+
+      body {
+        cursor: auto;
+      }
+    }
+
+    /* Loading Animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 1s ease-out forwards;
     }
   </style>
 </head>
 
 <body>
+  <!-- Custom Cursor -->
+  <div class="custom-cursor"></div>
+  <div class="cursor-follower"></div>
+
+  <!-- Enhanced Background Layers -->
+  <div class="gradient-bg"></div>
   <div class="noise-overlay"></div>
+  <div class="scanlines"></div>
+  <div class="grid-overlay"></div>
+  <div class="light-beams"></div>
   
   <canvas id="bg"></canvas>
 
+  <!-- Hero Section -->
   <section class="min-h-screen flex flex-col justify-center items-center text-center px-4 relative z-10 pt-10">
-    <div style="position: absolute; width: 60%; height: 60%; background: radial-gradient(circle, rgba(127,0,255,0.15) 0%, transparent 70%); filter: blur(60px); z-index: -1;"></div>
+    <div style="position: absolute; width: 100%; height: 100%; background: radial-gradient(circle, rgba(176,38,255,0.25) 0%, rgba(0,243,255,0.2) 40%, transparent 70%); filter: blur(100px); z-index: -1; animation: pulse 6s ease-in-out infinite;"></div>
 
-    <h1 class="hero-title mb-2 gs-reveal">Montanha Digital</h1>
-    <p class="mb-12 text-xl hero-subtitle gs-reveal">Primeiro canal que usa IA para trazer as melhores ofertas!</p>
+    <h1 class="hero-title mb-6 gs-reveal float-animation" data-text="MONTANHA DIGITAL">MONTANHA DIGITAL</h1>
+    <p class="mb-20 hero-subtitle gs-reveal">Primeiro canal que usa IA para trazer as melhores ofertas!</p>
 
     <div class="buttons-container gs-reveal">
-      <a href="https://t.me/grupomontanhadigital" class="btn-telegram">
-        <svg class="social-icon" viewBox="0 0 24 24">
-          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.538.26l.193-2.98 5.59-5.04c.24-.213-.054-.334-.373-.121l-6.916 4.34-2.98-.924c-.643-.203-.656-.643.136-.95l11.57-4.46c.535-.196 1.004.128.832.941z"/>
-        </svg>
-        Telegram • GRUPO de Ofertas
-      </a>
-      
-      <a href="https://t.me/montanhadigitaloficial" class="btn-telegram">
-        <svg class="social-icon" viewBox="0 0 24 24">
-          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.538.26l.193-2.98 5.59-5.04c.24-.213-.054-.334-.373-.121l-6.916 4.34-2.98-.924c-.643-.203-.656-.643.136-.95l11.57-4.46c.535-.196 1.004.128.832.941z"/>
-        </svg>
-        Telegram • CANAL de Ofertas
-      </a>
-
-      <a href="https://x.com/digitalmontanha" class="btn-x">
-        <svg class="social-icon" viewBox="0 0 24 24">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-        </svg>
-        Conheça nossas ofertas no X (Twitter)!
-      </a>
-
-      <a href="https://www.instagram.com/montanhadigitaloficial/" class="btn-instagram">
-        <svg class="social-icon" viewBox="0 0 24 24">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.148 3.228-1.667 4.772-4.919 4.919-.058 1.265-.07 1.645-.07 4.85s.012 3.584.07 4.85c.148 3.228 1.667 4.772 4.919 4.919 1.266.058 1.645.07 4.85.07s3.584-.012 4.85-.07c3.252-.148 4.771-1.691 4.919-4.919.058-1.265.07-1.645.07-4.85s-.012-3.584-.07-4.85c-.148-3.228-1.667-4.772-4.919-4.919-1.266-.058-1.645-.07-4.85-.07zm0 2.163c3.204 0 3.584.012 4.85.07 2.44.111 3.391 1.056 3.502 3.502.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.111 2.44-1.062 3.391-3.502 3.502-1.265.058-1.645.07-4.85.07s-3.584-.012-4.85-.07c-2.44-.111-3.391-1.056-3.502-3.502-.058-1.265-.07-1.645-.07-4.85s.012-3.584.07-4.85c.111-2.44 1.062-3.391 3.502-3.502 1.265-.058 1.645-.07 4.85-.07zm0 3.627c-2.347 0-4.25 1.903-4.25 4.25s1.903 4.25 4.25 4.25 4.25-1.903 4.25-4.25-1.903-4.25-4.25-4.25zm0 2.163c1.18 0 2.131.951 2.131 2.131s-.951 2.131-2.131 2.131-2.131-.951-2.131-2.131.951-2.131 2.131-2.131zm6.54-.577c0 .813-.66 1.473-1.473 1.473s-1.473-.66-1.473-1.473c0-.813.66-1.473 1.473-1.473s1.473.66 1.473 1.473z"/>
-        </svg>
-        Conheça nossas ofertas no Instagram!
-      </a>
-
-      <a href="https://chat.whatsapp.com/CaEbDpdy2DFAyvpuAXfhK1" class="btn-whatsapp">
+      <!-- WhatsApp em primeiro -->
+      <a href="https://chat.whatsapp.com/CaEbDpdy2DFAyvpuAXfhK1" class="btn-whatsapp" target="_blank" rel="noopener noreferrer">
         <svg class="social-icon" viewBox="0 0 24 24">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
         </svg>
-        Conheça nossas ofertas no WhatsApp!
+        WhatsApp • Grupo
       </a>
-    </div>
-  </section>
 
-  <section class="py-24 px-4 resources-section">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16">
-        <h2 class="text-4xl md:text-5xl font-bold text-white mb-4" style="font-family: 'Orbitron'; text-shadow: 0 0 20px rgba(0,243,255,0.3);">Recursos</h2>
-        <p class="text-gray-400 text-lg">O futuro do consumo inteligente com IA</p>
-      </div>
+      <!-- Telegram GRUPO em segundo -->
+      <a href="https://t.me/grupomontanhadigital" class="btn-telegram" target="_blank" rel="noopener noreferrer">
+        <svg class="social-icon" viewBox="0 0 24 24">
+          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.538.26l.193-2.98 5.59-5.04c.24-.213-.054-.334-.373-.121l-6.916 4.34-2.98-.924c-.643-.203-.656-.643.136-.95l11.57-4.46c.535-.196 1.004.128.832.941z"/>
+        </svg>
+        Telegram • GRUPO
+      </a>
       
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="card-3d card-amazon">
-          <h3 class="text-2xl text-white">Amazon</h3>
-          <p>Ofertas atualizadas com inteligência artificial</p>
-        </div>
-        
-        <div class="card-3d card-mercadolivre">
-          <h3 class="text-2xl text-white">Mercado Livre</h3>
-          <p>Análise inteligente para o melhor custo-benefício</p>
-        </div>
-        
-        <div class="card-3d card-future">
-          <h3 class="text-2xl text-white">Em breve: Shopee & Magalu</h3>
-          <p>Mais plataformas, mais oportunidades</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer class="mt-0 py-8 text-center text-gray-500 text-sm">
-    <div class="flex justify-center flex-wrap gap-8 mb-4">
-      <a href="https://t.me/montanhadigitaloficial" target="_blank">
-        <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.538.26l.193-2.98 5.59-5.04c.24-.213-.054-.334-.373-.121l-6.916 4.34-2.98-.924c-.643-.203-.656-.643.136-.95l11.57-4.46c.535-.196 1.004.128.832.941z"/></svg>
-        Telegram
+      <!-- Telegram CANAL em terceiro -->
+      <a href="https://t.me/montanhadigitaloficial" class="btn-telegram" target="_blank" rel="noopener noreferrer">
+        <svg class="social-icon" viewBox="0 0 24 24">
+          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.538.26l.193-2.98 5.59-5.04c.24-.213-.054-.334-.373-.121l-6.916 4.34-2.98-.924c-.643-.203-.656-.643.136-.95l11.57-4.46c.535-.196 1.004.128.832.941z"/>
+        </svg>
+        Telegram • CANAL
       </a>
-      <a href="https://x.com/digitalmontanha" target="_blank">
-        <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+
+      <!-- Mercado Livre em quarto -->
+      <a href="https://www.mercadolivre.com.br/social/montanhadigital" class="btn-mercadolivre" target="_blank" rel="noopener noreferrer">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M15.995 3.877v2.287h5.624v11.359h-5.624v2.287h7.911V3.877h-7.911zm-2.854 9.158c-.577 1.091-1.284 1.637-2.118 1.637-.835 0-1.541-.546-2.118-1.637L6.26 8.87v11.94H3.59V3.877h2.67l4.763 8.897 4.763-8.897h2.67V20.81h-2.67V8.87l-2.645 4.165z"/>
+        </svg>
+        Mercado Livre
+      </a>
+
+      <!-- X em quinto -->
+      <a href="https://x.com/digitalmontanha" class="btn-x" target="_blank" rel="noopener noreferrer">
+        <svg class="social-icon" viewBox="0 0 24 24">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
         X (Twitter)
       </a>
-      <a href="https://www.instagram.com/montanhadigitaloficial/" target="_blank">
-        <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.148 3.228-1.667 4.772-4.919 4.919-.058 1.265-.07 1.645-.07 4.85s.012 3.584.07 4.85c.148 3.228 1.667 4.772 4.919 4.919 1.266.058 1.645.07 4.85.07s3.584-.012 4.85-.07c3.252-.148 4.771-1.691 4.919-4.919.058-1.265.07-1.645.07-4.85s-.012-3.584-.07-4.85c-.148-3.228-1.667-4.772-4.919-4.919-1.266-.058-1.645-.07-4.85-.07zm0 2.163c3.204 0 3.584.012 4.85.07 2.44.111 3.391 1.056 3.502 3.502.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.111 2.44-1.062 3.391-3.502 3.502-1.265.058-1.645.07-4.85.07s-3.584-.012-4.85-.07c-2.44-.111-3.391-1.056-3.502-3.502-.058-1.265-.07-1.645-.07-4.85s.012-3.584.07-4.85c.111-2.44 1.062-3.391 3.502-3.502 1.265-.058 1.645-.07 4.85-.07zm0 3.627c-2.347 0-4.25 1.903-4.25 4.25s1.903 4.25 4.25 4.25 4.25-1.903 4.25-4.25-1.903-4.25-4.25-4.25zm0 2.163c1.18 0 2.131.951 2.131 2.131s-.951 2.131-2.131 2.131-2.131-.951-2.131-2.131.951-2.131 2.131-2.131zm6.54-.577c0 .813-.66 1.473-1.473 1.473s-1.473-.66-1.473-1.473c0-.813.66-1.473 1.473-1.473s1.473.66 1.473 1.473z"/></svg>
+
+      <!-- Instagram em sexto -->
+      <a href="https://www.instagram.com/montanhadigitaloficial/" class="btn-instagram" target="_blank" rel="noopener noreferrer">
+        <svg class="social-icon" viewBox="0 0 24 24">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.148 3.228-1.667 4.772-4.919 4.919-.058 1.265-.07 1.645-.07 4.85s.012 3.584.07 4.85c.148 3.228 1.667 4.772 4.919 4.919 1.266.058 1.645.07 4.85.07s3.584-.012 4.85-.07c3.252-.148 4.771-1.691 4.919-4.919.058-1.265.07-1.645.07-4.85s-.012-3.584-.07-4.85c-.148-3.228-1.667-4.772-4.919-4.919-1.266-.058-1.645-.07-4.85-.07zm0 2.163c3.204 0 3.584.012 4.85.07 2.44.111 3.391 1.056 3.502 3.502.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.111 2.44-1.062 3.391-3.502 3.502-1.265.058-1.645.07-4.85.07s-3.584-.012-4.85-.07c-2.44-.111-3.391-1.056-3.502-3.502-.058-1.265-.07-1.645-.07-4.85s.012-3.584.07-4.85c.111-2.44 1.062-3.391 3.502-3.502 1.265-.058 1.645-.07 4.85-.07zm0 3.627c-2.347 0-4.25 1.903-4.25 4.25s1.903 4.25 4.25 4.25 4.25-1.903 4.25-4.25-1.903-4.25-4.25-4.25zm0 2.163c1.18 0 2.131.951 2.131 2.131s-.951 2.131-2.131 2.131-2.131-.951-2.131-2.131.951-2.131 2.131-2.131zm6.54-.577c0 .813-.66 1.473-1.473 1.473s-1.473-.66-1.473-1.473c0-.813.66-1.473 1.473-1.473s1.473.66 1.473 1.473z"/>
+        </svg>
         Instagram
       </a>
-      <a href="https://chat.whatsapp.com/CaEbDpdy2DFAyvpuAXfhK1" target="_blank">
-        <svg class="w-4 h-4 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </div>
+  </section>
+
+  <!-- Resources Section -->
+  <section class="py-28 px-4 resources-section">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-24">
+        <h2 class="text-6xl md:text-7xl font-bold text-white mb-8" style="font-family: 'Orbitron'; text-shadow: 0 0 40px rgba(0,243,255,0.8), 0 0 80px rgba(176,38,255,0.6); letter-spacing: 4px; animation: titleFloat 6s ease-in-out infinite;">RECURSOS</h2>
+        <p class="text-gray-200 text-2xl font-semibold" style="text-shadow: 0 4px 20px rgba(0,0,0,0.9); letter-spacing: 2px;">O futuro do consumo inteligente com IA</p>
+      </div>
+      
+      <div class="grid md:grid-cols-3 gap-12">
+        <div class="card-3d card-amazon fade-in">
+          <span class="card-icon" style="color: #b026ff;">🛒</span>
+          <h3>Amazon</h3>
+          <p>Ofertas atualizadas com inteligência artificial em tempo real, garantindo os melhores preços</p>
+        </div>
+        
+        <div class="card-3d card-mercadolivre fade-in" style="animation-delay: 0.2s;">
+          <span class="card-icon" style="color: #ffe600;">💰</span>
+          <h3>Mercado Livre</h3>
+          <p>Análise inteligente e algoritmos avançados para o melhor custo-benefício do mercado brasileiro</p>
+        </div>
+        
+        <div class="card-3d card-future fade-in" style="animation-delay: 0.4s;">
+          <span class="card-icon" style="color: #00f3ff;">🚀</span>
+          <h3>Em breve: Shopee & Magalu</h3>
+          <p>Mais plataformas, mais oportunidades, mais economia. A revolução está apenas começando</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="mt-0 py-12 text-center text-gray-500 text-sm">
+    <div class="flex justify-center flex-wrap gap-10 mb-8">
+      <a href="https://t.me/montanhadigitaloficial" target="_blank" rel="noopener noreferrer">
+        <svg class="w-6 h-6 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.538.26l.193-2.98 5.59-5.04c.24-.213-.054-.334-.373-.121l-6.916 4.34-2.98-.924c-.643-.203-.656-.643.136-.95l11.57-4.46c.535-.196 1.004.128.832.941z"/></svg>
+        Telegram
+      </a>
+      <a href="https://x.com/digitalmontanha" target="_blank" rel="noopener noreferrer">
+        <svg class="w-6 h-6 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X (Twitter)
+      </a>
+      <a href="https://www.instagram.com/montanhadigitaloficial/" target="_blank" rel="noopener noreferrer">
+        <svg class="w-6 h-6 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.148 3.228-1.667 4.772-4.919 4.919-.058 1.265-.07 1.645-.07 4.85s.012 3.584.07 4.85c.148 3.228 1.667 4.772 4.919 4.919 1.266.058 1.645.07 4.85.07s3.584-.012 4.85-.07c3.252-.148 4.771-1.691 4.919-4.919.058-1.265.07-1.645.07-4.85s-.012-3.584-.07-4.85c-.148-3.228-1.667-4.772-4.919-4.919-1.266-.058-1.645-.07-4.85-.07zm0 2.163c3.204 0 3.584.012 4.85.07 2.44.111 3.391 1.056 3.502 3.502.058 1.265.07 1.645.07 4.85s-.012 3.584-.07 4.85c-.111 2.44-1.062 3.391-3.502 3.502-1.265.058-1.645.07-4.85.07s-3.584-.012-4.85-.07c-2.44-.111-3.391-1.056-3.502-3.502-.058-1.265-.07-1.645-.07-4.85s.012-3.584.07-4.85c.111-2.44 1.062-3.391 3.502-3.502 1.265-.058 1.645-.07 4.85-.07zm0 3.627c-2.347 0-4.25 1.903-4.25 4.25s1.903 4.25 4.25 4.25 4.25-1.903 4.25-4.25-1.903-4.25-4.25-4.25zm0 2.163c1.18 0 2.131.951 2.131 2.131s-.951 2.131-2.131 2.131-2.131-.951-2.131-2.131.951-2.131 2.131-2.131zm6.54-.577c0 .813-.66 1.473-1.473 1.473s-1.473-.66-1.473-1.473c0-.813.66-1.473 1.473-1.473s1.473.66 1.473 1.473z"/></svg>
+        Instagram
+      </a>
+      <a href="https://www.mercadolivre.com.br/social/montanhadigital" target="_blank" rel="noopener noreferrer">
+        <svg class="w-6 h-6 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M15.995 3.877v2.287h5.624v11.359h-5.624v2.287h7.911V3.877h-7.911zm-2.854 9.158c-.577 1.091-1.284 1.637-2.118 1.637-.835 0-1.541-.546-2.118-1.637L6.26 8.87v11.94H3.59V3.877h2.67l4.763 8.897 4.763-8.897h2.67V20.81h-2.67V8.87l-2.645 4.165z"/></svg>
+        Mercado Livre
+      </a>
+      <a href="https://chat.whatsapp.com/CaEbDpdy2DFAyvpuAXfhK1" target="_blank" rel="noopener noreferrer">
+        <svg class="w-6 h-6 inline" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         WhatsApp
       </a>
     </div>
-    <p>&copy; <span id="year"></span> Montanha Digital. Todos os direitos reservados.</p>
+    <p style="text-shadow: 0 2px 10px rgba(0,0,0,0.8); font-size: 0.95rem; letter-spacing: 1px;">&copy; <span id="year"></span> Montanha Digital. Todos os direitos reservados.</p>
   </footer>
 
-  <button id="scrollTopBtn" class="fixed bottom-6 right-6 p-4 rounded-full z-50 hidden transition transform hover:scale-110">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Scroll Top Button -->
+  <button id="scrollTopBtn" class="fixed bottom-10 right-10 p-5 rounded-full z-50 hidden transition transform">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
       <path d="M18 15l-6-6-6 6"/>
     </svg>
   </button>
 
   <script>
-    // --- 1. THREE.JS: TERRENO DIGITAL (CYBER-TERRAIN) ---
+    // --- Custom Cursor ---
+    const cursor = document.querySelector('.custom-cursor');
+    const follower = document.querySelector('.cursor-follower');
+    
+    let mouseX = 0, mouseY = 0;
+    let cursorX = 0, cursorY = 0;
+    let followerX = 0, followerY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animateCursor() {
+      // Smooth cursor following
+      cursorX += (mouseX - cursorX) * 0.2;
+      cursorY += (mouseY - cursorY) * 0.2;
+      followerX += (mouseX - followerX) * 0.1;
+      followerY += (mouseY - followerY) * 0.1;
+
+      cursor.style.left = cursorX + 'px';
+      cursor.style.top = cursorY + 'px';
+      follower.style.left = followerX + 'px';
+      follower.style.top = followerY + 'px';
+
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    // Cursor interaction effects
+    document.querySelectorAll('a, button').forEach(elem => {
+      elem.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'scale(1.5)';
+        cursor.style.borderColor = '#ff00ff';
+        follower.style.transform = 'scale(2)';
+      });
+      elem.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'scale(1)';
+        cursor.style.borderColor = '#00f3ff';
+        follower.style.transform = 'scale(1)';
+      });
+    });
+
+    // --- THREE.JS: ULTIMATE CYBER-TERRAIN ---
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x030008, 0.02); // Fog para profundidade infinita
+    scene.fog = new THREE.FogExp2(0x000000, 0.015);
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ 
@@ -330,71 +1026,244 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Criando uma grade de terreno ondulado
-    const geometry = new THREE.PlaneGeometry(100, 100, 40, 40);
+    // Main terrain
+    const geometry = new THREE.PlaneGeometry(150, 150, 80, 80);
     const material = new THREE.MeshBasicMaterial({ 
-      color: 0x5000aa, 
+      color: 0x7000ff, 
       wireframe: true,
       transparent: true,
-      opacity: 0.15
+      opacity: 0.35
     });
     const terrain = new THREE.Mesh(geometry, material);
     scene.add(terrain);
 
-    // Sistema de partículas flutuantes (Dados/Poeira Digital)
+    // Secondary terrain layer
+    const geometry2 = new THREE.PlaneGeometry(120, 120, 70, 70);
+    const material2 = new THREE.MeshBasicMaterial({ 
+      color: 0x00ddff, 
+      wireframe: true,
+      transparent: true,
+      opacity: 0.25
+    });
+    const terrain2 = new THREE.Mesh(geometry2, material2);
+    terrain2.position.y = -3;
+    scene.add(terrain2);
+
+    // Tertiary layer for more depth
+    const geometry3 = new THREE.PlaneGeometry(100, 100, 60, 60);
+    const material3 = new THREE.MeshBasicMaterial({ 
+      color: 0xff00ff, 
+      wireframe: true,
+      transparent: true,
+      opacity: 0.15
+    });
+    const terrain3 = new THREE.Mesh(geometry3, material3);
+    terrain3.position.y = -5;
+    scene.add(terrain3);
+
+    // Ultra enhanced particle system
     const pGeo = new THREE.BufferGeometry();
-    const pCount = 800;
+    const pCount = 2500;
     const pPos = new Float32Array(pCount * 3);
-    for(let i=0; i<pCount*3; i++) {
-      pPos[i] = (Math.random() - 0.5) * 60;
+    const pVel = new Float32Array(pCount * 3);
+    const pColors = new Float32Array(pCount * 3);
+    
+    for(let i=0; i<pCount*3; i+=3) {
+      pPos[i] = (Math.random() - 0.5) * 100;
+      pPos[i+1] = (Math.random() - 0.5) * 100;
+      pPos[i+2] = (Math.random() - 0.5) * 100;
+      
+      pVel[i] = (Math.random() - 0.5) * 0.03;
+      pVel[i+1] = Math.random() * 0.03 + 0.01;
+      pVel[i+2] = (Math.random() - 0.5) * 0.03;
+
+      // Color variation
+      const colorChoice = Math.random();
+      if(colorChoice < 0.33) {
+        pColors[i] = 0; pColors[i+1] = 0.95; pColors[i+2] = 1; // Cyan
+      } else if(colorChoice < 0.66) {
+        pColors[i] = 0.69; pColors[i+1] = 0.15; pColors[i+2] = 1; // Purple
+      } else {
+        pColors[i] = 1; pColors[i+1] = 0; pColors[i+2] = 1; // Pink
+      }
     }
+    
     pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const pMat = new THREE.PointsMaterial({ size: 0.08, color: 0x00f3ff, transparent: true, opacity: 0.6 });
+    pGeo.setAttribute('color', new THREE.BufferAttribute(pColors, 3));
+    
+    const pMat = new THREE.PointsMaterial({ 
+      size: 0.15, 
+      transparent: true, 
+      opacity: 0.9,
+      blending: THREE.AdditiveBlending,
+      vertexColors: true
+    });
     const particles = new THREE.Points(pGeo, pMat);
     scene.add(particles);
 
-    // Posicionamento Inicial
-    terrain.rotation.x = -Math.PI / 2; // Deitar o plano
-    terrain.position.y = -5; // Jogar para baixo da tela
-    camera.position.z = 10;
-    camera.position.y = 2;
+    // Enhanced glowing orbs with variety
+    const orbColors = [0xb026ff, 0x00f3ff, 0xff00ff, 0xffe600];
+    const orbs = [];
+    
+    for(let i = 0; i < 25; i++) {
+      const orbGeo = new THREE.SphereGeometry(Math.random() * 0.5 + 0.3, 16, 16);
+      const orbMat = new THREE.MeshBasicMaterial({ 
+        color: orbColors[Math.floor(Math.random() * orbColors.length)], 
+        transparent: true, 
+        opacity: 0.7,
+        blending: THREE.AdditiveBlending
+      });
+      
+      const orb = new THREE.Mesh(orbGeo, orbMat);
+      orb.position.set(
+        (Math.random() - 0.5) * 80,
+        (Math.random() - 0.5) * 50,
+        (Math.random() - 0.5) * 80
+      );
+      orb.userData = {
+        velocity: new THREE.Vector3(
+          (Math.random() - 0.5) * 0.03,
+          (Math.random() - 0.5) * 0.03,
+          (Math.random() - 0.5) * 0.03
+        ),
+        phase: Math.random() * Math.PI * 2,
+        pulseSpeed: Math.random() * 2 + 1
+      };
+      scene.add(orb);
+      orbs.push(orb);
+    }
 
-    // Mouse Interaction
-    let mouseX = 0;
-    let mouseY = 0;
+    // Positioning
+    terrain.rotation.x = -Math.PI / 2;
+    terrain.position.y = -10;
+    terrain2.rotation.x = -Math.PI / 2;
+    terrain2.position.y = -13;
+    terrain3.rotation.x = -Math.PI / 2;
+    terrain3.position.y = -15;
+    
+    camera.position.z = 18;
+    camera.position.y = 5;
+
+    // Mouse interaction variables
+    let targetX = 0, targetY = 0;
+    let currentX = 0, currentY = 0;
+    
     document.addEventListener('mousemove', (e) => {
-      mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-      mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+      targetX = (e.clientX / window.innerWidth) * 2 - 1;
+      targetY = -(e.clientY / window.innerHeight) * 2 + 1;
     });
 
-    // Variáveis de animação do terreno
+    // Store original positions
     const originalPositions = geometry.attributes.position.array.slice();
+    const originalPositions2 = geometry2.attributes.position.array.slice();
+    const originalPositions3 = geometry3.attributes.position.array.slice();
     let time = 0;
 
     function animate() {
       requestAnimationFrame(animate);
-      time += 0.005;
+      time += 0.01;
 
-      // Animação ondulatória do terreno (Simulando "Montanha")
+      // Ultra complex terrain animation
       const positions = geometry.attributes.position.array;
       for(let i = 0; i < positions.length; i += 3) {
-        // Ondulação baseada em seno e cosseno
         const x = originalPositions[i];
-        const y = originalPositions[i+1]; // Note que geometry é plane, então y é o "z" visual no wireframe
+        const y = originalPositions[i+1];
         
-        // Complex wave function
-        const z = Math.sin(x * 0.5 + time) * 1.5 + Math.cos(y * 0.3 + time) * 1.5;
-        positions[i+2] = z; // Modifica o Z (altura) do plane geometry
+        const wave1 = Math.sin(x * 0.25 + time) * 2.5;
+        const wave2 = Math.cos(y * 0.35 + time * 0.7) * 2.5;
+        const wave3 = Math.sin((x + y) * 0.15 + time * 1.3) * 2;
+        const wave4 = Math.cos((x - y) * 0.2 + time * 0.5) * 1.5;
+        
+        positions[i+2] = wave1 + wave2 + wave3 + wave4;
       }
       geometry.attributes.position.needsUpdate = true;
 
-      // Rotação suave da câmera baseada no mouse
-      camera.position.x += (mouseX * 3 - camera.position.x) * 0.05;
-      camera.position.y += (-mouseY * 1 + 2 - camera.position.y) * 0.05;
-      camera.lookAt(0, 0, 0);
+      // Second layer animation
+      const positions2 = geometry2.attributes.position.array;
+      for(let i = 0; i < positions2.length; i += 3) {
+        const x = originalPositions2[i];
+        const y = originalPositions2[i+1];
+        
+        const wave1 = Math.sin(x * 0.2 + time * 1.1) * 2.2;
+        const wave2 = Math.cos(y * 0.3 + time * 0.6) * 2.2;
+        const wave3 = Math.sin((x * y) * 0.01 + time) * 1.8;
+        
+        positions2[i+2] = wave1 + wave2 + wave3;
+      }
+      geometry2.attributes.position.needsUpdate = true;
 
-      // Partículas subindo lentamente
-      particles.rotation.y = time * 0.1;
+      // Third layer animation
+      const positions3 = geometry3.attributes.position.array;
+      for(let i = 0; i < positions3.length; i += 3) {
+        const x = originalPositions3[i];
+        const y = originalPositions3[i+1];
+        
+        const wave1 = Math.sin(x * 0.15 + time * 0.8) * 2;
+        const wave2 = Math.cos(y * 0.25 + time * 0.4) * 2;
+        
+        positions3[i+2] = wave1 + wave2;
+      }
+      geometry3.attributes.position.needsUpdate = true;
+
+      // Ultra smooth camera movement
+      currentX += (targetX * 5 - currentX) * 0.03;
+      currentY += (-targetY * 3 + 5 - currentY) * 0.03;
+      
+      camera.position.x = currentX;
+      camera.position.y = currentY;
+      camera.lookAt(0, -5, 0);
+
+      // Enhanced particles
+      const particlePositions = particles.geometry.attributes.position.array;
+      for(let i = 0; i < particlePositions.length; i += 3) {
+        particlePositions[i] += pVel[i];
+        particlePositions[i+1] += pVel[i+1];
+        particlePositions[i+2] += pVel[i+2];
+        
+        // Boundary checks with smooth reset
+        if(Math.abs(particlePositions[i]) > 50) {
+          pVel[i] *= -1;
+          particlePositions[i] = Math.sign(particlePositions[i]) * 50;
+        }
+        if(particlePositions[i+1] > 50) {
+          particlePositions[i+1] = -50;
+        }
+        if(particlePositions[i+1] < -50) {
+          pVel[i+1] = Math.random() * 0.03 + 0.01;
+        }
+        if(Math.abs(particlePositions[i+2]) > 50) {
+          pVel[i+2] *= -1;
+          particlePositions[i+2] = Math.sign(particlePositions[i+2]) * 50;
+        }
+      }
+      particles.geometry.attributes.position.needsUpdate = true;
+      particles.rotation.y = time * 0.03;
+
+      // Enhanced orb animations
+      orbs.forEach((orb, index) => {
+        orb.position.add(orb.userData.velocity);
+        
+        // Boundary checks with smooth bounce
+        ['x', 'y', 'z'].forEach(axis => {
+          if(Math.abs(orb.position[axis]) > 40) {
+            orb.userData.velocity[axis] *= -0.99;
+            orb.position[axis] = Math.sign(orb.position[axis]) * 40;
+          }
+        });
+        
+        // Complex pulsing effect
+        const scale = 1 + Math.sin(time * orb.userData.pulseSpeed + orb.userData.phase) * 0.4;
+        orb.scale.set(scale, scale, scale);
+        
+        // Advanced color cycling
+        const hue = (time * 0.05 + index * 0.05) % 1;
+        const sat = 1;
+        const light = 0.5 + Math.sin(time * 2 + orb.userData.phase) * 0.2;
+        orb.material.color.setHSL(hue, sat, light);
+        
+        // Opacity variation
+        orb.material.opacity = 0.5 + Math.sin(time * 1.5 + orb.userData.phase) * 0.3;
+      });
 
       renderer.render(scene, camera);
     }
@@ -407,57 +1276,197 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // --- 2. GSAP: REVEAL ANIMATIONS (Cinematic Intro) ---
+    // --- GSAP: CINEMA-GRADE ANIMATIONS ---
+    gsap.registerPlugin(ScrollTrigger);
+
     gsap.from(".gs-reveal", {
-      duration: 1.5,
-      y: 50,
+      duration: 2,
+      y: 100,
       opacity: 0,
-      stagger: 0.2,
-      ease: "power3.out",
-      delay: 0.2
+      stagger: 0.3,
+      ease: "power4.out",
+      delay: 0.4
     });
 
-    // Scroll Trigger simples para os cards
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          gsap.fromTo(entry.target, 
-            { opacity: 0, y: 30, rotationX: 10 },
-            { opacity: 1, y: 0, rotationX: 0, duration: 1, ease: "power2.out" }
-          );
-          observer.unobserve(entry.target);
+    // Enhanced card animations with ScrollTrigger
+    document.querySelectorAll('.card-3d').forEach((card, index) => {
+      gsap.fromTo(card, 
+        { 
+          opacity: 0, 
+          y: 80, 
+          rotationX: 20,
+          rotationY: -20,
+          scale: 0.85
+        },
+        {
+          opacity: 1,
+          y: 0,
+          rotationX: 0,
+          rotationY: 0,
+          scale: 1,
+          duration: 1.5,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 80%",
+            end: "top 30%",
+            scrub: 1
+          }
         }
-      });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.card-3d').forEach(card => observer.observe(card));
-
-    // --- 3. VANILLA TILT (Efeito Holográfico nos Cards) ---
-    VanillaTilt.init(document.querySelectorAll(".card-3d"), {
-      max: 10,
-      speed: 1000,
-      glare: true,
-      "max-glare": 0.2,
-      scale: 1.02,
-      gyroscope: true // Mobile friendly
+      );
     });
 
-    // --- 4. UTILS ---
+    // --- VANILLA TILT: ULTIMATE 3D EFFECT ---
+    VanillaTilt.init(document.querySelectorAll(".card-3d"), {
+      max: 20,
+      speed: 600,
+      glare: true,
+      "max-glare": 0.5,
+      scale: 1.08,
+      gyroscope: true,
+      perspective: 2000
+    });
+
+    // --- PREMIUM BUTTON INTERACTIONS ---
+    document.querySelectorAll('[class^="btn-"]').forEach(btn => {
+      btn.addEventListener('mouseenter', function() {
+        gsap.to(this, {
+          y: -8,
+          scale: 1.08,
+          duration: 0.4,
+          ease: "power2.out"
+        });
+      });
+      
+      btn.addEventListener('mouseleave', function() {
+        gsap.to(this, {
+          y: 0,
+          scale: 1,
+          duration: 0.4,
+          ease: "power2.out"
+        });
+      });
+      
+      btn.addEventListener('click', function(e) {
+        // Enhanced ripple effect
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const ripple = document.createElement('span');
+        ripple.style.cssText = `
+          position: absolute;
+          left: ${x}px;
+          top: ${y}px;
+          width: 0;
+          height: 0;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255,255,255,0.8), transparent);
+          transform: translate(-50%, -50%);
+          pointer-events: none;
+          z-index: 100;
+        `;
+        
+        this.appendChild(ripple);
+        
+        gsap.to(ripple, {
+          width: 600,
+          height: 600,
+          opacity: 0,
+          duration: 1,
+          ease: "power2.out",
+          onComplete: () => ripple.remove()
+        });
+
+        // Button feedback animation
+        gsap.to(this, {
+          scale: 0.95,
+          duration: 0.1,
+          yoyo: true,
+          repeat: 1,
+          ease: "power2.inOut"
+        });
+      });
+    });
+
+    // --- UTILS ---
     document.getElementById('year').textContent = new Date().getFullYear();
     
     const scrollTopBtn = document.getElementById('scrollTopBtn');
+    
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 300) {
+      const currentScroll = window.scrollY;
+      
+      if (currentScroll > 500) {
         scrollTopBtn.classList.remove('hidden');
-        gsap.to(scrollTopBtn, { opacity: 1, duration: 0.3 });
+        gsap.to(scrollTopBtn, { 
+          opacity: 1, 
+          scale: 1,
+          rotation: 0,
+          duration: 0.4 
+        });
       } else {
-        gsap.to(scrollTopBtn, { opacity: 0, duration: 0.3, onComplete: () => scrollTopBtn.classList.add('hidden') });
+        gsap.to(scrollTopBtn, { 
+          opacity: 0, 
+          scale: 0.8,
+          rotation: 180,
+          duration: 0.4, 
+          onComplete: () => scrollTopBtn.classList.add('hidden') 
+        });
       }
     });
     
     scrollTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      gsap.to(window, {
+        scrollTo: 0,
+        duration: 1.5,
+        ease: "power3.inOut"
+      });
     });
+
+    // Advanced parallax effect
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY;
+      
+      document.querySelector('.hero-title').style.transform = `translateY(${scrolled * 0.4}px) scale(${1 - scrolled * 0.0003})`;
+      document.querySelector('.hero-subtitle').style.transform = `translateY(${scrolled * 0.2}px)`;
+      
+      // Parallax for background elements
+      document.querySelector('.gradient-bg').style.transform = `translateY(${scrolled * 0.3}px) scale(${1 + scrolled * 0.0002})`;
+    });
+
+    // Console Easter Egg Premium
+    const styles = [
+      'color: #b026ff',
+      'background: linear-gradient(135deg, #b026ff, #00f3ff)',
+      'font-size: 24px',
+      'font-weight: bold',
+      'padding: 10px 20px',
+      'border-radius: 8px',
+      'text-shadow: 0 0 20px #00f3ff'
+    ].join(';');
+    
+    console.log('%c🚀 MONTANHA DIGITAL - ULTRA PREMIUM ', styles);
+    console.log('%cPowered by AI | Three.js | GSAP | Vanilla Tilt', 'color: #00f3ff; font-size: 16px; font-weight: bold;');
+    console.log('%cTecnologia de Ponta 2026 🌟', 'color: #ffe600; font-size: 14px;');
+
+    // Performance monitoring
+    let fps = 0;
+    let lastTime = performance.now();
+    
+    function monitorPerformance() {
+      const currentTime = performance.now();
+      fps = Math.round(1000 / (currentTime - lastTime));
+      lastTime = currentTime;
+      
+      if(fps < 30) {
+        // Reduce particle count if performance is low
+        particles.geometry.setDrawRange(0, Math.floor(pCount * 0.7));
+      }
+      
+      requestAnimationFrame(monitorPerformance);
+    }
+    monitorPerformance();
   </script>
 </body>
 </html>
